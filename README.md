@@ -6,5 +6,6 @@ Pycman is a Pacman clone made in Python with randomly generated labyrinths. This
 
 ## Graphics
 
-The tileset can be found here: [https://whiteshampoo.itch.io/topdown-prototyping-walls]
-The skeleton player character can be found here: [https://snoblin.itch.io/pixel-rpg-skeleton-free]
+The tileset can be found here: https://whiteshampoo.itch.io/topdown-prototyping-walls
+
+The skeleton player character can be found here: https://snoblin.itch.io/pixel-rpg-skeleton-free

@@ -8,11 +8,12 @@ class Game:
     def __init__(self) -> None:
         pg.init()
 
-        self.screen = pg.display.set_mode((WIDTH,HEIGHT))
+        self.display_screen = pg.display.set_mode((WIDTH*3,HEIGHT*3))
+        self.screen = pg.Surface((HEIGHT,WIDTH))
         pg.display.set_caption("Pycman")
         self.clock = pg.time.Clock()
 
-        self.level = Level()
+        self.level = Level(self.screen)
 
     def run(self) -> None:
         while True:
@@ -22,8 +23,11 @@ class Game:
                     sys.exit()
                 
             self.screen.fill("black")
+            
             self.level.run()
-            pg.display.update()
+            scaled_screen = pg.transform.smoothscale(self.screen, self.display_screen.get_size())
+            self.display_screen.blit(scaled_screen, (0,0))
+            pg.display.flip()
             self.clock.tick(SPEED)
 
 

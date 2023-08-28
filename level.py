@@ -5,15 +5,15 @@ import random as rnd
 from settings import *
 from player import Player
 from tile import Tile
-from debug import debug
+
 
 class Level:
-    def __init__(self) -> None:
+    def __init__(self, surface) -> None:
 
-        self.visible_sprites = pg.sprite.Group()
-        self.obstacle_sprites = pg.sprite.Group()
+        self.visible_sprites = YSortCameraGroup(surface)
+        self.obstacle_sprites = YSortCameraGroup(surface)
 
-        self.display_surface = pg.display.get_surface()
+        self.display_surface = surface
 
         self.images = {
             "wall": "Graphics/Tiles/010.png",
@@ -24,10 +24,9 @@ class Level:
         self.__create_level__()
 
     def run(self) -> None:
-        self.visible_sprites.draw(self.display_surface)
+        self.visible_sprites.custom_draw(self.player)
         self.visible_sprites.update()
 
-        debug(self.player.direction)
 
     def __create_level__(self) -> None:
         level = self.__generate_labyrinth__()
@@ -36,11 +35,11 @@ class Level:
                 x = col_index * TILESIZE
                 y = row_index * TILESIZE
                 if col == 1:
-                    Tile((x,y),self.images["wall"],[self.visible_sprites,self.obstacle_sprites])
-                else:
-                    Tile((x,y),self.images["floor"],[self.visible_sprites])
+                    Tile((x, y), self.images["wall"], [
+                         self.visible_sprites, self.obstacle_sprites])
 
-        self.player = Player((LEVEL_SIZE//2*TILESIZE,LEVEL_SIZE//2*TILESIZE),self.images["player"],[self.visible_sprites],self.obstacle_sprites)
+        self.player = Player((LEVEL_SIZE//2*TILESIZE, LEVEL_SIZE//2*TILESIZE),
+                             self.images["player"], [self.visible_sprites], self.obstacle_sprites)
 
     def __generate_labyrinth__(self) -> list:
         size = LEVEL_SIZE
@@ -95,3 +94,23 @@ class Level:
                         retgrid[y][x] = 0
 
         return retgrid
+
+
+class YSortCameraGroup(pg.sprite.Group):
+    def __init__(self, surface) -> None:
+        super().__init__()
+
+        self.display_surface = surface
+        self.half_width = self.display_surface.get_size()[0]//2
+        self.half_height = self.display_surface.get_size()[1]//2
+        self.offset = pg.math.Vector2()
+
+
+
+    def custom_draw(self, player) -> None:
+        self.offset.x = player.rect.centerx - self.half_width
+        self.offset.y = player.rect.centery - self.half_height
+
+        for sprite in sorted(self.sprites(),key = lambda sprite: sprite.rect.centery):
+            offset_pos = sprite.rect.topleft - self.offset
+            self.display_surface.blit(sprite.image, offset_pos)

@@ -5,8 +5,8 @@ pg.init()
 font = pg.font.FontType(None, 30)
 
 
-def debug(info, y=10, x=10) -> None:
-    display_surface = pg.display.get_surface()
+def debug(info,surface, y=10, x=10) -> None:
+    display_surface = surface
     debug_surf = font.render(str(info), True, 'White')
     debug_rect = debug_surf.get_rect(topleft=(x, y))
     pg.draw.rect(display_surface, 'Black', debug_rect)
